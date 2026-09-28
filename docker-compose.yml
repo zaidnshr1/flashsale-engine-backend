@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: flashsale-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: flashsale_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - flashsale-net
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: flashsale_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - flashsale-net
+
+volumes:
+  postgres_data:
+
+networks:
+  flashsale-net:
+    driver: bridge
