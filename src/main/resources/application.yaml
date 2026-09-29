@@ -22,11 +22,38 @@ spring:
           format_sql: true
           dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  data:
+      redis:
+          host: localhost
+          port: 6379
+          timeout: 2000ms
+          lettuce:
+              pool:
+                  max-active: 16
+                  max-idle: 8
+                  min-idle: 2
+
+  rabbitmq:
+      host: localhost
+      port: 5672
+      username: guest
+      password: guest
+      listener:
+          simple:
+              concurrency: 2
+              max-concurrency: 5
+              prefetch: 10
+
 app:
   jwt:
     secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
     access-token-expiration-ms: 900000
     refresh-token-expiration-ms: 604800000
+
+  rabbitmq:
+      exchange: flashsale.direct.exchange
+      queue: flashsale.order.queue
+      routing-key: flashsale.order.key
 
 springdoc:
   api-docs:
