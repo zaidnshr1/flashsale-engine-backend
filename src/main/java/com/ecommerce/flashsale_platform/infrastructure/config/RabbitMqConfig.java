@@ -1,8 +1,6 @@
 package com.ecommerce.flashsale_platform.infrastructure.config;
 
-import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.DirectExchange;
-import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
@@ -31,6 +29,11 @@ public class RabbitMqConfig {
     @Bean
     public DirectExchange exchangeQueue() {
         return new DirectExchange(exchangeName);
+    }
+
+    @Bean
+    public Binding orderBinding(Queue orderQueue, DirectExchange exchangeQueue) {
+        return BindingBuilder.bind(orderQueue).to(exchangeQueue).with(routingKey);
     }
 
     @Bean
