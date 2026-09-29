@@ -20,7 +20,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    private static final String REDIS_STOK_KEY_PREFIX = "product:stok:";
+    public static final String REDIS_STOK_KEY_PREFIX = "product:stok:";
 
     private ProductResponse mapToResponse(Product product) {
         return ProductResponse.builder()
