@@ -5,7 +5,9 @@ import com.ecommerce.flashsale_platform.common.exception.ResourceNotFoundExcepti
 import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutRequest;
 import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutResponse;
 import com.ecommerce.flashsale_platform.modules.order.application.message.OrderMessage;
+import com.ecommerce.flashsale_platform.modules.order.domain.model.Order;
 import com.ecommerce.flashsale_platform.modules.order.domain.model.OrderStatus;
+import com.ecommerce.flashsale_platform.modules.order.domain.repository.OrderRepository;
 import com.ecommerce.flashsale_platform.modules.product.application.service.ProductService;
 import com.ecommerce.flashsale_platform.modules.product.domain.model.Product;
 import com.ecommerce.flashsale_platform.modules.product.domain.repository.ProductRepository;
@@ -26,6 +28,7 @@ import java.util.UUID;
 public class OrderService {
 
     private final ProductRepository productRepository;
+    private final OrderRepository orderRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final RabbitTemplate rabbitTemplate;
 
@@ -80,5 +83,11 @@ public class OrderService {
                 .message("Your order has been queued successfully. We are processing it!")
                 .build();
 
+    }
+
+    @Transactional(readOnly = true)
+    public Order getOrderByNumber(String orderNumber) {
+        return orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found with number: " + orderNumber));
     }
 }

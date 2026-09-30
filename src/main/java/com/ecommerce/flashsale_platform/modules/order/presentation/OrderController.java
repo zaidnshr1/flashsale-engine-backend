@@ -5,6 +5,7 @@ import com.ecommerce.flashsale_platform.infrastructure.security.UserPrincipal;
 import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutRequest;
 import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutResponse;
 import com.ecommerce.flashsale_platform.modules.order.application.service.OrderService;
+import com.ecommerce.flashsale_platform.modules.order.domain.model.Order;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order")
@@ -36,5 +34,12 @@ public class OrderController {
         CheckoutResponse response = orderService.processFlashSaleCheckout(principal.getId(), request);
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(ApiResponse.ok("Checkout initiated", response));
+    }
+
+    @GetMapping("/{orderNumber}")
+    @Operation(summary = "Check order processing status")
+    public ResponseEntity<ApiResponse<Order>> getOrderStatus(@PathVariable String orderNumber) {
+        Order order = orderService.getOrderByNumber(orderNumber);
+        return ResponseEntity.ok(ApiResponse.ok("Order status retrieved", order));
     }
 }

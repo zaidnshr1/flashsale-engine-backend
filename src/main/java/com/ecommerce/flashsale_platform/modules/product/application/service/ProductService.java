@@ -79,7 +79,7 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public List<ProductResponse> getActiveFlashSaleProducts() {
-        return productRepository.findByFlashSaleActive()
+        return productRepository.findByFlashSaleActiveTrue()
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
