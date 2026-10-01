@@ -1,4 +1,4 @@
-package com.ecommerce.flashsale_platform.modules.order.application.dto;
+package com.ecommerce.flashsale_platform.modules.order.application.dto.response;
 
 import com.ecommerce.flashsale_platform.modules.order.domain.model.OrderStatus;
 import lombok.Builder;

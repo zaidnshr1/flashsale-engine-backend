@@ -8,7 +8,9 @@ import org.apache.coyote.BadRequestException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -51,12 +53,21 @@ public class IdempotentAspect {
 
             log.info("Idempotent hit: Returning cached transaction result for key: {}", idempotencyKey);
 
+            MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+            if (ResponseEntity.class.isAssignableFrom(signature.getReturnType())) {
+                return ResponseEntity.ok(cachedData);
+            }
+
             return cachedData;
         }
 
         try {
             Object result = joinPoint.proceed();
-            redisTemplate.opsForValue().set(redisKey, result, Duration.ofSeconds(idempotent.expireSeconds()));
+            Object dataToCache = result;
+            if (result instanceof ResponseEntity<?> responseEntity) {
+                dataToCache = responseEntity.getBody();
+            }
+            redisTemplate.opsForValue().set(redisKey, dataToCache, Duration.ofSeconds(idempotent.expireSeconds()));
 
             log.info("Transaction succeeded. Result cached for Idempotency-Key: {}", idempotencyKey);
             return result;

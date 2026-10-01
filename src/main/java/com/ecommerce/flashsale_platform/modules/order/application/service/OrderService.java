@@ -2,8 +2,8 @@ package com.ecommerce.flashsale_platform.modules.order.application.service;
 
 import com.ecommerce.flashsale_platform.common.exception.BadRequestException;
 import com.ecommerce.flashsale_platform.common.exception.ResourceNotFoundException;
-import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutRequest;
-import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutResponse;
+import com.ecommerce.flashsale_platform.modules.order.application.dto.request.CheckoutRequest;
+import com.ecommerce.flashsale_platform.modules.order.application.dto.response.CheckoutResponse;
 import com.ecommerce.flashsale_platform.modules.order.application.message.OrderMessage;
 import com.ecommerce.flashsale_platform.modules.order.domain.model.Order;
 import com.ecommerce.flashsale_platform.modules.order.domain.model.OrderStatus;

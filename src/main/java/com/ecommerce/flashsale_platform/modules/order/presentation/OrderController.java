@@ -2,8 +2,8 @@ package com.ecommerce.flashsale_platform.modules.order.presentation;
 
 import com.ecommerce.flashsale_platform.common.api.ApiResponse;
 import com.ecommerce.flashsale_platform.infrastructure.security.UserPrincipal;
-import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutRequest;
-import com.ecommerce.flashsale_platform.modules.order.application.dto.CheckoutResponse;
+import com.ecommerce.flashsale_platform.modules.order.application.dto.request.CheckoutRequest;
+import com.ecommerce.flashsale_platform.modules.order.application.dto.response.CheckoutResponse;
 import com.ecommerce.flashsale_platform.modules.order.application.service.OrderService;
 import com.ecommerce.flashsale_platform.modules.order.domain.model.Order;
 import io.swagger.v3.oas.annotations.Operation;

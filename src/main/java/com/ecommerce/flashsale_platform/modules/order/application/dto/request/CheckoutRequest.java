@@ -1,4 +1,4 @@
-package com.ecommerce.flashsale_platform.modules.order.application.dto;
+package com.ecommerce.flashsale_platform.modules.order.application.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
