@@ -42,4 +42,17 @@ public class OrderController {
         Order order = orderService.getOrderByNumber(orderNumber);
         return ResponseEntity.ok(ApiResponse.ok("Order status retrieved", order));
     }
+
+    @GetMapping
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<java.util.List<Order>>> getUserOrders(@AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(ApiResponse.ok("User orders retrieved", orderService.getUserOrders(principal.getId())));
+    }
+
+    @PostMapping("/{orderNumber}/cancel")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<ApiResponse<Order>> cancelOrder(
+            @AuthenticationPrincipal UserPrincipal principal, @PathVariable String orderNumber) {
+        return ResponseEntity.ok(ApiResponse.ok("Order cancelled", orderService.cancelOrder(orderNumber, principal.getId())));
+    }
 }

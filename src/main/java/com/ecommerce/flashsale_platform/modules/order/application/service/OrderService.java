@@ -90,4 +90,38 @@ public class OrderService {
         return orderRepository.findByOrderNumber(orderNumber)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with number: " + orderNumber));
     }
+
+    @Transactional(readOnly = true)
+    public java.util.List<Order> getUserOrders(Long userId) {
+        return orderRepository.findByIdOrderByCreatedAtDesc(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public java.util.List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    @Transactional
+    public Order updateOrderStatus(String orderNumber, OrderStatus status) {
+        Order order = getOrderByNumber(orderNumber);
+        order.setStatus(status);
+        return orderRepository.save(order);
+    }
+
+    @Transactional
+    public Order cancelOrder(String orderNumber, Long userId) {
+        Order order = getOrderByNumber(orderNumber);
+        if (!order.getUserId().equals(userId)) {
+            throw new com.ecommerce.flashsale_platform.common.exception.BadRequestException("Not authorized to cancel this order");
+        }
+        if (order.getStatus() == OrderStatus.PAID || order.getStatus() == OrderStatus.SUCCESS) {
+            throw new com.ecommerce.flashsale_platform.common.exception.BadRequestException("Cannot cancel a paid or successful order");
+        }
+        order.setStatus(OrderStatus.CANCELLED);
+
+        String stockKey = ProductService.REDIS_STOK_KEY_PREFIX + order.getProductId();
+        redisTemplate.opsForValue().increment(stockKey, order.getQuantity());
+
+        return orderRepository.save(order);
+    }
 }

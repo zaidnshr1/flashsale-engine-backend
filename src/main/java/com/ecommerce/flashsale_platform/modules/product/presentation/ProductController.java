@@ -46,4 +46,30 @@ public class ProductController {
         List<ProductResponse> response = productService.getActiveFlashSaleProducts();
         return ResponseEntity.ok(ApiResponse.ok("Active flash sale products retrieved", response));
     }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<ProductResponse>>> getAllProducts() {
+        return ResponseEntity.ok(ApiResponse.ok("All products retrieved", productService.getAllProducts()));
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<ProductResponse>> updateProduct(
+            @PathVariable Long id, @RequestBody com.ecommerce.flashsale_platform.modules.product.application.dto.request.UpdateProductRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok("Product updated", productService.updateProduct(id, request)));
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.ok(ApiResponse.ok("Product deleted", null));
+    }
+
+    @PatchMapping("/{id}/flash-sale")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<ProductResponse>> toggleFlashSale(
+            @PathVariable Long id, @Valid @RequestBody com.ecommerce.flashsale_platform.modules.product.application.dto.request.ToggleFlashSaleRequest request) {
+        return ResponseEntity.ok(ApiResponse.ok("Flash sale status updated", productService.toggleFlashSale(id, request)));
+    }
 }

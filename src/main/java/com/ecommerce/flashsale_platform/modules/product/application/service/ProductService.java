@@ -84,4 +84,45 @@ public class ProductService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
+    @Transactional
+    public ProductResponse updateProduct(Long id, com.ecommerce.flashsale_platform.modules.product.application.dto.request.UpdateProductRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+
+        if (request.getName() != null) product.setName(request.getName());
+        if (request.getDescription() != null) product.setDescription(request.getDescription());
+        if (request.getPrice() != null) product.setPrice(request.getPrice());
+        if (request.getFlashSalePrice() != null) product.setFlashSalePrice(request.getFlashSalePrice());
+        if (request.getStock() != null) {
+            product.setStok(request.getStock());
+            redisTemplate.opsForValue().set(REDIS_STOK_KEY_PREFIX + id, request.getStock());
+        }
+
+        return mapToResponse(productRepository.save(product));
+    }
+
+    @Transactional
+    public void deleteProduct(Long id) {
+        if (!productRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Product not found");
+        }
+        productRepository.deleteById(id);
+        redisTemplate.delete(REDIS_STOK_KEY_PREFIX + id);
+    }
+
+    @Transactional
+    public ProductResponse toggleFlashSale(Long id, com.ecommerce.flashsale_platform.modules.product.application.dto.request.ToggleFlashSaleRequest request) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+        product.setFlashSaleActive(request.getActive());
+        return mapToResponse(productRepository.save(product));
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponse> getAllProducts() {
+        return productRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 }
